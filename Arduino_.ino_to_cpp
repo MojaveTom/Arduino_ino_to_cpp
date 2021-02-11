@@ -1,4 +1,31 @@
 #!/usr/bin/env bash
+#
+# **********************************************************************************
+# Copyright Thomas DeMay, tom@demayfamily.net
+# Code by Thomas DeMay
+# **********************************************************************************
+# License
+# **********************************************************************************
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+# **********************************************************************************
+
+
 #  Script to convert an Arduino .ino file to cpp.
 #
 #  The .ino file needs to have some standard Arduino includes and
@@ -8,8 +35,6 @@
 #  Use xsltproc to run an xslt against the xml to extract
 #    the function prototypes; and clean up the output be
 #    leaving out the first line.
-#  Use sed to paste the results at the beginning of the .ino file
-#    to produce the .cpp file.
 #
 #  First argument to this script is the path to the .ino file.
 #    If not specified, search the current and sub-directories for .ino files.
