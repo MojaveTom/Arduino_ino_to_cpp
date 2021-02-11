@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+#  Script to convert an Arduino .ino file to cpp.
+#
+#  The .ino file needs to have some standard Arduino includes and
+#    function prototypes added to the top of the file.
+#
+#  Use doxygen to scan the source write to an xml file.
+#  Use xsltproc to run an xslt against the xml to extract
+#    the function prototypes; and clean up the output be
+#    leaving out the first line.
+#  Use sed to paste the results at the beginning of the .ino file
+#    to produce the .cpp file.
+#
+#  First argument to this script is the path to the .ino file.
+#    If not specified, search the current and sub-directories for .ino files.
+#    If a directory, all .ino files in that directory and
+#    sub-directories will be converted.
+#
+#echo "We are in \"$0\""
+myDir=${0%/*}
+#echo "My dir is: \"${myDir}\""
+inFile="${1}"
+#echo "1: inFile = \"${inFile}\""
+if [ -z "${inFile}" ]; then
+    inFile="."
+fi
+#echo "2: inFile = \"${inFile}\""
+if [ -d "${inFile}" ]; then
+    inf=$(find ${inFile} -name '*.ino' -not -path '*/.*/*' -exec printf '%s\n' {} \; )
+else
+    inf=${inFile}'
+'
+fi
+savIfs="$IFS"
+IFS='
+'
+# echo "inf = ${inf}"
+for f in ${inf}; do
+    # echo "f has ${#f} chars."
+    if [ -z "${f}" ]; then echo "Ignoring empty file name"; continue; fi
+    if [ ! -r "${f}" ]; then echo "Ignoriing unreadable file \"${f}\""; continue; fi
+    echo "converting file \"${f}\""
+    outFile=${f%ino}cpp # substitute "ino" at end of file name with "cpp"
+    echo "outFile is      \"${outFile}\""
+    printf '#include <Arduino.h>
+#include <SPI.h>
+#include <Wire.h>
+/*******  Function Prototypes  ********/' >  ${outFile}
+    rm -r /tmp/$USER/xml
+    DOXY_INPUT="\"${f}\"" doxygen ${myDir}/Doxyfile
+    xsltproc --nonet ${myDir}/getFuncs.xslt /tmp/$USER/xml/*ino.xml | tail -n+2 >> ${outFile}
+    printf '/**************************************/\n\n' >> ${outFile}
+    cat ${f}  >> ${outFile}
+done
+IFS="$savIfs"
